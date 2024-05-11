@@ -7,7 +7,7 @@ type CreditCardProps = {
   year: string;
   name: string;
   cvc: string;
-  cardImageSrc: string;
+  brand: string;
   cardColor: string;
 };
 
@@ -18,9 +18,10 @@ export default function CardPreview({
   year,
   name,
   cvc,
-  cardImageSrc,
+  brand,
   cardColor = '',
 }: CreditCardProps) {
+  console.log(cardNumbers);
   return (
     <S.Container>
       <S.CardContainer $bgColor={cardColor}>
@@ -30,27 +31,15 @@ export default function CardPreview({
               <S.IcChip />
             </S.CardHeaderContentWrapper>
             <S.CardHeaderContentWrapper>
-              {cardImageSrc ? <S.CardBrand src={cardImageSrc} /> : null}
+              {brand ? <span>{brand}</span> : null}
             </S.CardHeaderContentWrapper>
           </S.CardHeader>
           <S.CardInfoWrapper>
             <S.NumbersContainer>
-              <S.NumbersWrapper>
-                <S.Text>{cardNumbers[0]}</S.Text>
-              </S.NumbersWrapper>
-              <S.NumbersWrapper>
-                <S.Text>{cardNumbers[1]}</S.Text>
-              </S.NumbersWrapper>
-              <S.NumbersWrapper>
-                {Array.from({ length: cardNumbers[2].length }).map((_, index) => (
-                  <S.Dot $bgColor={cardColor} key={'third card section' + index} />
-                ))}
-              </S.NumbersWrapper>
-              <S.NumbersWrapper>
-                {Array.from({ length: cardNumbers[3].length }).map((_, index) => (
-                  <S.Dot $bgColor={cardColor} key={'fourth card section' + index} />
-                ))}
-              </S.NumbersWrapper>
+              {cardNumbers.map((cardNumber, index) => {
+                if (index === 0) return <S.NumbersWrapper>{cardNumber}</S.NumbersWrapper>;
+                else return <S.NumbersWrapper>{'*'.repeat(cardNumber.length)}</S.NumbersWrapper>;
+              })}
             </S.NumbersContainer>
             <S.Text>{month + `${month || year ? '/' : ''}` + year}</S.Text>
             <S.Text>{name}</S.Text>

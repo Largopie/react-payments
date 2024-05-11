@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as S from './CardRegistration.style';
 
 import CardPreview from '../../components/CardPreview/CardPreview';
-import useCardNumbers from '../../hooks/useCardNumbers';
 import useExpirationDate from '../../hooks/useExpirationDate';
 
 import { CARD_COMPANY_COLOR } from '../../constants/cardSection';
-import CardNumbersInput from '../../components/Inputs/CardNumbersInput';
+import CardNumberInput from '../../components/Inputs/CardNumberInput';
 import CardBrandSelect from '../../components/Inputs/CardBrandSelect';
 import ExpirationDateInput from '../../components/Inputs/ExpirationDateInput';
 import CardOwnerInput from '../../components/Inputs/CardOwnerInput';
 import CvcNumberInput from '../../components/Inputs/CvcNumberInput';
 import PasswordInput from '../../components/Inputs/PasswordInput';
+
+import { useCardNumber } from 'nakta-react-payments-hooks';
 import useCvcNumber from '../../hooks/useCvcNumber';
 import usePassword from '../../hooks/usePassword';
 import useName from '../../hooks/useName';
@@ -31,7 +32,7 @@ export default function CardRegistration() {
   const [cvcDisplay, setCvcDisplay] = useState(false);
   const [passwordDisplay, setPasswordDisplay] = useState(false);
 
-  const { cardImageSrc, cardNumbersArray, isValidCardNumbers } = useCardNumbers<HTMLInputElement>();
+  const cardNumber = useCardNumber();
   const { cardCompany, isValidCardCompany } = useCardCompany();
   const { month, year, isValidExpirationDate } = useExpirationDate();
   const { name, isValidName } = useName();
@@ -39,12 +40,16 @@ export default function CardRegistration() {
   const { password, isValidPassword } = usePassword();
 
   const isShowConfirmButton =
-    isValidCardNumbers &&
+    cardNumber.isValid &&
     isValidExpirationDate &&
     isValidName &&
     isValidCvc &&
     isValidPassword &&
     isValidCardCompany;
+
+  useEffect(() => {
+    if (cardNumber.isValid) setCardBrandDisplay(true);
+  }, [cardNumber.isValid]);
 
   return (
     <>
@@ -52,21 +57,18 @@ export default function CardRegistration() {
         <S.CardPreviewWrapper>
           <CardPreview
             isFlip={isFlip}
-            cardNumbers={cardNumbersArray.map(({ value }) => value)}
+            cardNumbers={cardNumber.value.split('-')}
             month={month.value}
             year={year.value}
             name={name.value.toUpperCase()}
             cvc={cvc.value}
-            cardImageSrc={cardImageSrc}
+            brand={cardNumber.brand}
             cardColor={CARD_COMPANY_COLOR[cardCompany.value]}
           />
         </S.CardPreviewWrapper>
         <S.CardInfoContainer>
           {/* 카드 번호 입력 */}
-          <CardNumbersInput
-            cardNumbersArray={cardNumbersArray}
-            setNextContentDisplay={setCardBrandDisplay}
-          />
+          <CardNumberInput cardNumber={cardNumber} />
 
           {/* 카드사 선택 */}
           {cardBrandDisplay && (
