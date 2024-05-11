@@ -1,24 +1,17 @@
 import * as S from './common.style';
 import { CVC_NUMBER } from '../../constants/cardSection';
-import useInput from '../../hooks/useInput';
 import InputSection from '../InputSection';
 import Input from '../composables/Input';
 import InputLabel from '../composables/InputLabel';
 import { MAX_LENGTH } from '../../constants/rules';
+import { useCardCVC } from 'nakta-react-payments-hooks';
 
 interface Props {
-  cvc: ReturnType<typeof useInput<HTMLInputElement>>;
-  setNextContentDisplay: React.Dispatch<React.SetStateAction<boolean>>;
+  cvc: ReturnType<typeof useCardCVC>;
   setIsFlip: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CvcNumberInput({ cvc, setNextContentDisplay, setIsFlip }: Props) {
-  const goNextStep = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value.length === MAX_LENGTH.cvcNumber) {
-      setNextContentDisplay(true);
-    }
-  };
-
+export default function CvcNumberInput({ cvc, setIsFlip }: Props) {
   return (
     <S.Wrapper>
       <InputSection title={CVC_NUMBER.title} inputTitle={CVC_NUMBER.inputTitle}>
@@ -27,15 +20,12 @@ export default function CvcNumberInput({ cvc, setNextContentDisplay, setIsFlip }
           isAutoFocus={true}
           id="cvc"
           maxLength={MAX_LENGTH.cvcNumber}
-          onChange={(e) => {
-            cvc.onChangeHandler(e);
-            goNextStep(e);
-          }}
+          onChange={cvc.onChange}
           onBlur={(e) => {
-            cvc.onBlurHandler(e);
+            cvc.onBlur(e);
             setIsFlip(false);
           }}
-          isError={cvc.isError}
+          isError={cvc.error.state}
           placeholder={CVC_NUMBER.placeholder}
           onFocus={() => {
             setIsFlip(true);
@@ -45,7 +35,7 @@ export default function CvcNumberInput({ cvc, setNextContentDisplay, setIsFlip }
         />
       </InputSection>
       <S.ErrorWrapper>
-        {cvc.isError && <S.ErrorMessage>{cvc.errorMessage}</S.ErrorMessage>}
+        {cvc.error.state && <S.ErrorMessage>{cvc.error.message}</S.ErrorMessage>}
       </S.ErrorWrapper>
     </S.Wrapper>
   );

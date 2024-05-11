@@ -12,12 +12,12 @@ import CvcNumberInput from '../../components/Inputs/CvcNumberInput';
 import PasswordInput from '../../components/Inputs/PasswordInput';
 
 import {
+  useCardCVC,
   useCardCompany,
   useCardExpirationDate,
   useCardNumber,
   useCardOwner,
 } from 'nakta-react-payments-hooks';
-import useCvcNumber from '../../hooks/useCvcNumber';
 import usePassword from '../../hooks/usePassword';
 
 export type CardNumberState = {
@@ -38,8 +38,8 @@ export default function CardRegistration() {
   const cardCompany = useCardCompany();
   const cardExpirationDate = useCardExpirationDate();
   const cardOwner = useCardOwner();
+  const cardCVC = useCardCVC();
 
-  const { cvc, isValidCvc } = useCvcNumber();
   const { password, isValidPassword } = usePassword();
 
   const isShowConfirmButton =
@@ -47,7 +47,7 @@ export default function CardRegistration() {
     cardCompany.isValid &&
     cardExpirationDate.isExpirationDateValid &&
     cardOwner.isValid &&
-    isValidCvc &&
+    cardCVC.isValid &&
     isValidPassword;
 
   useEffect(() => {
@@ -62,6 +62,10 @@ export default function CardRegistration() {
     if (cardExpirationDate.isExpirationDateValid) setCardOwnerDisplay(true);
   }, [cardExpirationDate.isExpirationDateValid]);
 
+  useEffect(() => {
+    if (cardCVC.isValid) setPasswordDisplay(true);
+  }, [cardCVC.isValid]);
+
   return (
     <>
       <S.SubContainer>
@@ -72,7 +76,7 @@ export default function CardRegistration() {
             month={cardExpirationDate.month.value}
             year={cardExpirationDate.year.value}
             name={cardOwner.value.toUpperCase()}
-            cvc={cvc.value}
+            cvc={cardCVC.value}
             brand={cardNumber.brand}
             cardColor={CARD_COMPANY_COLOR[cardCompany.value]}
           />
@@ -93,13 +97,7 @@ export default function CardRegistration() {
           )}
 
           {/* CVC 번호 입력 */}
-          {cvcDisplay && (
-            <CvcNumberInput
-              cvc={cvc}
-              setNextContentDisplay={setPasswordDisplay}
-              setIsFlip={setIsFlip}
-            />
-          )}
+          {cvcDisplay && <CvcNumberInput cvc={cardCVC} setIsFlip={setIsFlip} />}
           {/* 비밀번호 입력 */}
           {passwordDisplay && <PasswordInput password={password} />}
         </S.CardInfoContainer>
