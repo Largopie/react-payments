@@ -5,7 +5,7 @@ import Input from '../composables/Input';
 import InputLabel from '../composables/InputLabel';
 import { MAX_LENGTH } from '../../constants/rules';
 import styled from 'styled-components';
-import useInput from '../../hooks/useInput';
+import { useCardOwner } from 'nakta-react-payments-hooks';
 
 const CompleteButton = styled.button`
   padding: 4px 8px;
@@ -20,11 +20,11 @@ const CompleteButton = styled.button`
 `;
 
 interface Props {
-  name: ReturnType<typeof useInput<HTMLInputElement>>;
+  cardOwner: ReturnType<typeof useCardOwner>;
   setNextContentDisplay: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CardOwnerInput({ name, setNextContentDisplay }: Props) {
+export default function CardOwnerInput({ cardOwner, setNextContentDisplay }: Props) {
   const goNextStep = (e: React.KeyboardEvent<HTMLInputElement>, value: string) => {
     if (value !== '' && e.key === 'Enter') {
       setNextContentDisplay(true);
@@ -39,20 +39,20 @@ export default function CardOwnerInput({ name, setNextContentDisplay }: Props) {
           isAutoFocus={true}
           id="name"
           maxLength={MAX_LENGTH.ownerName}
-          onChange={name.onChangeHandler}
-          onKeyDown={(e) => goNextStep(e, name.value)}
-          onBlur={name.onBlurHandler}
-          isError={name.isError}
+          onChange={cardOwner.onChange}
+          onKeyDown={(e) => goNextStep(e, cardOwner.value)}
+          onBlur={cardOwner.onBlur}
+          isError={cardOwner.error.state}
           placeholder="JOHN DOE"
           type="text"
-          value={name.value.toUpperCase()}
+          value={cardOwner.value.toUpperCase()}
         />
-        {name.value && (
+        {cardOwner.isValid && (
           <CompleteButton onClick={() => setNextContentDisplay(true)}>완료</CompleteButton>
         )}
       </InputSection>
       <S.ErrorWrapper>
-        {name.isError && <S.ErrorMessage>{name.errorMessage}</S.ErrorMessage>}
+        {cardOwner.error.state && <S.ErrorMessage>{cardOwner.error.message}</S.ErrorMessage>}
       </S.ErrorWrapper>
     </S.Wrapper>
   );

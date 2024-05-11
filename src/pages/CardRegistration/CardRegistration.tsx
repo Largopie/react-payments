@@ -11,10 +11,14 @@ import CardOwnerInput from '../../components/Inputs/CardOwnerInput';
 import CvcNumberInput from '../../components/Inputs/CvcNumberInput';
 import PasswordInput from '../../components/Inputs/PasswordInput';
 
-import { useCardCompany, useCardExpirationDate, useCardNumber } from 'nakta-react-payments-hooks';
+import {
+  useCardCompany,
+  useCardExpirationDate,
+  useCardNumber,
+  useCardOwner,
+} from 'nakta-react-payments-hooks';
 import useCvcNumber from '../../hooks/useCvcNumber';
 import usePassword from '../../hooks/usePassword';
-import useName from '../../hooks/useName';
 
 export type CardNumberState = {
   value: string;
@@ -33,8 +37,8 @@ export default function CardRegistration() {
   const cardNumber = useCardNumber();
   const cardCompany = useCardCompany();
   const cardExpirationDate = useCardExpirationDate();
+  const cardOwner = useCardOwner();
 
-  const { name, isValidName } = useName();
   const { cvc, isValidCvc } = useCvcNumber();
   const { password, isValidPassword } = usePassword();
 
@@ -42,7 +46,7 @@ export default function CardRegistration() {
     cardNumber.isValid &&
     cardCompany.isValid &&
     cardExpirationDate.isExpirationDateValid &&
-    isValidName &&
+    cardOwner.isValid &&
     isValidCvc &&
     isValidPassword;
 
@@ -67,7 +71,7 @@ export default function CardRegistration() {
             cardNumbers={cardNumber.value.split('-')}
             month={cardExpirationDate.month.value}
             year={cardExpirationDate.year.value}
-            name={name.value.toUpperCase()}
+            name={cardOwner.value.toUpperCase()}
             cvc={cvc.value}
             brand={cardNumber.brand}
             cardColor={CARD_COMPANY_COLOR[cardCompany.value]}
@@ -84,7 +88,9 @@ export default function CardRegistration() {
           {expirationDateDisplay && <ExpirationDateInput cardExpirationDate={cardExpirationDate} />}
 
           {/* 카드 소유자 입력 */}
-          {cardOwnerDisplay && <CardOwnerInput name={name} setNextContentDisplay={setCvcDisplay} />}
+          {cardOwnerDisplay && (
+            <CardOwnerInput cardOwner={cardOwner} setNextContentDisplay={setCvcDisplay} />
+          )}
 
           {/* CVC 번호 입력 */}
           {cvcDisplay && (
