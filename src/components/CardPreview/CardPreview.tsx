@@ -21,7 +21,6 @@ export default function CardPreview({
   brand,
   cardColor = '',
 }: CreditCardProps) {
-  console.log(cardNumbers);
   return (
     <S.Container>
       <S.CardContainer $bgColor={cardColor}>
@@ -37,8 +36,12 @@ export default function CardPreview({
           <S.CardInfoWrapper>
             <S.NumbersContainer>
               {cardNumbers.map((cardNumber, index) => {
-                if (index === 0) return <S.NumbersWrapper>{cardNumber}</S.NumbersWrapper>;
-                else return <S.NumbersWrapper>{'*'.repeat(cardNumber.length)}</S.NumbersWrapper>;
+                if (index === 0)
+                  return <S.NumbersWrapper key={index}>{cardNumber}</S.NumbersWrapper>;
+                else
+                  return (
+                    <S.NumbersWrapper key={index}>{'*'.repeat(cardNumber.length)}</S.NumbersWrapper>
+                  );
               })}
             </S.NumbersContainer>
             <S.Text>{month + `${month || year ? '/' : ''}` + year}</S.Text>
