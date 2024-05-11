@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import * as S from './CardRegistration.style';
 
 import CardPreview from '../../components/CardPreview/CardPreview';
-import useExpirationDate from '../../hooks/useExpirationDate';
 
 import { CARD_COMPANY_COLOR } from '../../constants/cardSection';
 import CardNumberInput from '../../components/Inputs/CardNumberInput';
@@ -12,11 +11,10 @@ import CardOwnerInput from '../../components/Inputs/CardOwnerInput';
 import CvcNumberInput from '../../components/Inputs/CvcNumberInput';
 import PasswordInput from '../../components/Inputs/PasswordInput';
 
-import { useCardNumber } from 'nakta-react-payments-hooks';
+import { useCardCompany, useCardExpirationDate, useCardNumber } from 'nakta-react-payments-hooks';
 import useCvcNumber from '../../hooks/useCvcNumber';
 import usePassword from '../../hooks/usePassword';
 import useName from '../../hooks/useName';
-import useCardCompany from '../../hooks/useCardCompany';
 
 export type CardNumberState = {
   value: string;
@@ -28,28 +26,37 @@ export default function CardRegistration() {
   const [isFlip, setIsFlip] = useState(false);
   const [cardBrandDisplay, setCardBrandDisplay] = useState(false);
   const [expirationDateDisplay, setExpirationDateDisplay] = useState(false);
-  const [nameDisplay, setNameDisplay] = useState(false);
+  const [cardOwnerDisplay, setCardOwnerDisplay] = useState(false);
   const [cvcDisplay, setCvcDisplay] = useState(false);
   const [passwordDisplay, setPasswordDisplay] = useState(false);
 
   const cardNumber = useCardNumber();
-  const { cardCompany, isValidCardCompany } = useCardCompany();
-  const { month, year, isValidExpirationDate } = useExpirationDate();
+  const cardCompany = useCardCompany();
+  const cardExpirationDate = useCardExpirationDate();
+
   const { name, isValidName } = useName();
   const { cvc, isValidCvc } = useCvcNumber();
   const { password, isValidPassword } = usePassword();
 
   const isShowConfirmButton =
     cardNumber.isValid &&
-    isValidExpirationDate &&
+    cardCompany.isValid &&
+    cardExpirationDate.isExpirationDateValid &&
     isValidName &&
     isValidCvc &&
-    isValidPassword &&
-    isValidCardCompany;
+    isValidPassword;
 
   useEffect(() => {
     if (cardNumber.isValid) setCardBrandDisplay(true);
   }, [cardNumber.isValid]);
+
+  useEffect(() => {
+    if (cardCompany.isValid) setExpirationDateDisplay(true);
+  }, [cardCompany.isValid]);
+
+  useEffect(() => {
+    if (cardExpirationDate.isExpirationDateValid) setCardOwnerDisplay(true);
+  }, [cardExpirationDate.isExpirationDateValid]);
 
   return (
     <>
@@ -58,8 +65,8 @@ export default function CardRegistration() {
           <CardPreview
             isFlip={isFlip}
             cardNumbers={cardNumber.value.split('-')}
-            month={month.value}
-            year={year.value}
+            month={cardExpirationDate.month.value}
+            year={cardExpirationDate.year.value}
             name={name.value.toUpperCase()}
             cvc={cvc.value}
             brand={cardNumber.brand}
@@ -71,20 +78,13 @@ export default function CardRegistration() {
           <CardNumberInput cardNumber={cardNumber} />
 
           {/* 카드사 선택 */}
-          {cardBrandDisplay && (
-            <CardBrandSelect
-              cardCompany={cardCompany}
-              setNextContentDisplay={setExpirationDateDisplay}
-            />
-          )}
+          {cardBrandDisplay && <CardBrandSelect cardCompany={cardCompany} />}
 
           {/* 유효기간 입력 */}
-          {expirationDateDisplay && (
-            <ExpirationDateInput month={month} year={year} setNextContentDisplay={setNameDisplay} />
-          )}
+          {expirationDateDisplay && <ExpirationDateInput cardExpirationDate={cardExpirationDate} />}
 
           {/* 카드 소유자 입력 */}
-          {nameDisplay && <CardOwnerInput name={name} setNextContentDisplay={setCvcDisplay} />}
+          {cardOwnerDisplay && <CardOwnerInput name={name} setNextContentDisplay={setCvcDisplay} />}
 
           {/* CVC 번호 입력 */}
           {cvcDisplay && (
@@ -101,7 +101,7 @@ export default function CardRegistration() {
       {isShowConfirmButton && (
         <S.ConfirmLink
           to="/confirm"
-          state={{ cardNumber: cardNumbersArray[0].value, cardCompany: cardCompany.value }}
+          state={{ cardNumber: cardNumber.value.split('-')[0], cardCompany: cardCompany.value }}
         >
           확인
         </S.ConfirmLink>
