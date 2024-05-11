@@ -17,8 +17,8 @@ import {
   useCardExpirationDate,
   useCardNumber,
   useCardOwner,
+  useCardPassword,
 } from 'nakta-react-payments-hooks';
-import usePassword from '../../hooks/usePassword';
 
 export type CardNumberState = {
   value: string;
@@ -39,8 +39,7 @@ export default function CardRegistration() {
   const cardExpirationDate = useCardExpirationDate();
   const cardOwner = useCardOwner();
   const cardCVC = useCardCVC();
-
-  const { password, isValidPassword } = usePassword();
+  const cardPassword = useCardPassword();
 
   const isShowConfirmButton =
     cardNumber.isValid &&
@@ -48,7 +47,7 @@ export default function CardRegistration() {
     cardExpirationDate.isExpirationDateValid &&
     cardOwner.isValid &&
     cardCVC.isValid &&
-    isValidPassword;
+    cardPassword.isValid;
 
   useEffect(() => {
     if (cardNumber.isValid) setCardBrandDisplay(true);
@@ -98,8 +97,9 @@ export default function CardRegistration() {
 
           {/* CVC 번호 입력 */}
           {cvcDisplay && <CvcNumberInput cvc={cardCVC} setIsFlip={setIsFlip} />}
+
           {/* 비밀번호 입력 */}
-          {passwordDisplay && <PasswordInput password={password} />}
+          {passwordDisplay && <PasswordInput password={cardPassword} />}
         </S.CardInfoContainer>
       </S.SubContainer>
       {isShowConfirmButton && (

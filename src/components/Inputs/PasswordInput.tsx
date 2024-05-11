@@ -4,10 +4,10 @@ import InputSection from '../InputSection';
 import Input from '../composables/Input';
 import InputLabel from '../composables/InputLabel';
 import { MAX_LENGTH } from '../../constants/rules';
-import useInput from '../../hooks/useInput';
+import { useCardPassword } from 'nakta-react-payments-hooks';
 
 interface Props {
-  password: ReturnType<typeof useInput<HTMLInputElement>>;
+  password: ReturnType<typeof useCardPassword>;
 }
 
 export default function PasswordInput({ password }: Props) {
@@ -19,16 +19,16 @@ export default function PasswordInput({ password }: Props) {
           isAutoFocus={true}
           id="password"
           maxLength={MAX_LENGTH.password}
-          onChange={password.onChangeHandler}
-          onBlur={password.onBlurHandler}
-          isError={password.isError}
+          onChange={password.onChange}
+          onBlur={password.onBlur}
+          isError={password.error.state}
           placeholder={PASSWORD.placeholder}
           type="password"
           value={password.value}
         />
       </InputSection>
       <S.ErrorWrapper>
-        {password.isError && <S.ErrorMessage>{password.errorMessage}</S.ErrorMessage>}
+        {password.error.state && <S.ErrorMessage>{password.error.message}</S.ErrorMessage>}
       </S.ErrorWrapper>
     </S.Wrapper>
   );
