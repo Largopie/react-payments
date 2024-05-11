@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import CardPreview from '../components/CardPreview/CardPreview';
 import GlobalStyles from '../GlobalStyles';
-import MasterCard from '../assets/images/mastercard.png';
-import VisaCard from '../assets/images/visa.png';
 import { CARD_COMPANY_COLOR } from '../constants/cardSection';
 
 const meta = {
@@ -37,10 +35,6 @@ const meta = {
       control: 'text',
       description: '카드 소유자 입력 값',
     },
-    cardImageSrc: {
-      control: [MasterCard, VisaCard],
-      description: '카드 브랜드 이미지',
-    },
   },
 } satisfies Meta<typeof CardPreview>;
 export default meta;
@@ -55,7 +49,7 @@ export const Front: Story = {
     year: '00',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: '',
   },
 };
@@ -68,7 +62,7 @@ export const Back: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: '',
   },
 };
@@ -81,7 +75,7 @@ export const Visa: Story = {
     year: '01',
     cvc: '000',
     name: 'JOHN DOE',
-    cardImageSrc: VisaCard,
+    brand: 'visa',
     cardColor: '',
   },
 };
@@ -94,7 +88,7 @@ export const Master: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: MasterCard,
+    brand: 'mastercard',
     cardColor: '',
   },
 };
@@ -107,7 +101,7 @@ export const BC카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.BC카드,
   },
 };
@@ -120,7 +114,7 @@ export const 신한카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.신한카드,
   },
 };
@@ -133,7 +127,7 @@ export const 카카오뱅크: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.카카오뱅크,
   },
 };
@@ -146,7 +140,7 @@ export const 현대카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.현대카드,
   },
 };
@@ -159,7 +153,7 @@ export const 우리카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.우리카드,
   },
 };
@@ -172,7 +166,7 @@ export const 롯데카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.롯데카드,
   },
 };
@@ -185,7 +179,7 @@ export const 하나카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.하나카드,
   },
 };
@@ -198,7 +192,7 @@ export const 국민카드: Story = {
     year: '01',
     name: 'JOHN DOE',
     cvc: '000',
-    cardImageSrc: '',
+    brand: '',
     cardColor: CARD_COMPANY_COLOR.국민카드,
   },
 };
