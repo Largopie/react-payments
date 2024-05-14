@@ -1,4 +1,7 @@
+import { CARD_BRAND_IMAGE } from '../../assets/images';
 import * as S from './CardPreview.style';
+
+type CardBrand = keyof typeof CARD_BRAND_IMAGE;
 
 type CreditCardProps = {
   isFlip: boolean;
@@ -9,6 +12,10 @@ type CreditCardProps = {
   cvc: string;
   brand: string;
   cardColor: string;
+};
+
+const getCardBrandImage = (brand: CardBrand): string => {
+  return CARD_BRAND_IMAGE[brand];
 };
 
 export default function CardPreview({
@@ -30,7 +37,7 @@ export default function CardPreview({
               <S.IcChip />
             </S.CardHeaderContentWrapper>
             <S.CardHeaderContentWrapper>
-              {brand ? <span>{brand}</span> : null}
+              {brand ? <S.CardBrand src={getCardBrandImage(brand as CardBrand)} /> : null}
             </S.CardHeaderContentWrapper>
           </S.CardHeader>
           <S.CardInfoWrapper>
